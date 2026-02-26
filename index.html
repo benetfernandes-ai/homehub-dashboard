@@ -430,13 +430,14 @@ updateClock();
 async function loadAllData() {
   try {
     const res  = await fetch(`${AGENT_URL}/data/all`);
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
     const data = await res.json();
 
-    renderWeather(data.weather);
-    renderEvents(data.events);
-    renderMessages(data.messages);
-    renderTodos(data.todos?.todos || []);
-    renderNotices(data.notices || []);
+    if (data.weather && !data.weather.error)   renderWeather(data.weather);
+    if (data.events)                            renderEvents(data.events);
+    if (data.messages)                          renderMessages(data.messages);
+    if (data.todos)                             renderTodos(data.todos?.todos || []);
+    if (data.notices)                           renderNotices(data.notices || []);
 
     document.getElementById('status-dot').textContent = 'LIVE';
     document.getElementById('status-dot').style.color = 'var(--success)';
@@ -470,7 +471,12 @@ function renderWeather(w) {
 // ─── CALENDAR RENDER ─────────────────────────
 function renderEvents(events) {
   const el = document.getElementById('event-list');
-  if (!events || events.length === 0 || events[0]?.message) {
+  // Handle error object, non-array, or empty
+  if (!events || events.error) {
+    el.innerHTML = `<div class="no-items">📅 Calendar not connected yet.<br/>Make your Google Calendar public to enable.</div>`;
+    return;
+  }
+  if (!Array.isArray(events) || events.length === 0) {
     el.innerHTML = `<div class="no-items">${events?.[0]?.message || 'No upcoming events 🎉'}</div>`;
     return;
   }
