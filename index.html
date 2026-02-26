@@ -146,18 +146,18 @@
 
   /* ── TELEGRAM ── */
   .telegram-card { --accent:var(--blue); animation-delay:0.15s; }
-  .messages-list { display:flex; flex-direction:column; gap:8px; flex:1; overflow-y:auto; min-height:160px; }
+  .messages-list { display:flex; flex-direction:column; gap:10px; flex:1; overflow-y:auto; }
   .messages-list::-webkit-scrollbar { width:3px; }
   .messages-list::-webkit-scrollbar-thumb { background:var(--border); border-radius:2px; }
 
   .msg-bubble {
     background:var(--surface2); border:1px solid var(--border);
-    border-radius:9px; padding:10px 14px; animation:fadeUp 0.3s ease;
+    border-radius:9px; padding:14px 16px; animation:fadeUp 0.3s ease;
   }
   .msg-header { display:flex; justify-content:space-between; margin-bottom:3px; }
-  .msg-sender { font-size:0.82rem; font-weight:700; color:var(--blue); }
-  .msg-time   { font-size:0.72rem; color:var(--muted); font-family:'DM Mono',monospace; }
-  .msg-text   { font-size:1rem; color:var(--text); line-height:1.5; }
+  .msg-sender { font-size:1.1rem; font-weight:700; color:var(--blue); font-family:'DM Mono',monospace; }
+  .msg-time   { font-size:0.9rem; color:var(--muted); font-family:'DM Mono',monospace; }
+  .msg-text   { font-size:1.4rem; font-weight:500; color:var(--text); line-height:1.5; font-family:'DM Mono',monospace; white-space:normal; word-break:break-word; }
 
   .tg-row { display:flex; gap:7px; }
   .tg-input {
@@ -311,7 +311,7 @@
     .weather-icon { font-size:2.4rem !important; }
     .weather-temp { font-size:2.2rem !important; }
     .event-name { font-size:0.82rem; }
-    .msg-text { font-size:0.8rem; }
+    .msg-text { font-size:1.4rem; }
     .todo-text { font-size:0.8rem; }
     .notice-text { font-size:0.82rem; }
     .agent-response { font-size:0.76rem; min-height:36px; }
