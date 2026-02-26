@@ -1,0 +1,903 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Aspen Hub</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<style>
+  :root {
+    --bg:      #0d1117;
+    --surface: #161b22;
+    --surface2:#1e2530;
+    --border:  #2a3240;
+    --amber:   #f5a623;
+    --amber2:  #ffcb6b;
+    --teal:    #4ecdc4;
+    --rose:    #ff6b6b;
+    --text:    #e8eaf0;
+    --muted:   #7b8794;
+    --success: #52d68a;
+    --blue:    #5eb5f7;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    height: 100vh;
+    overflow: hidden;
+    background-image:
+      radial-gradient(ellipse 80% 60% at 10% 0%,   rgba(245,166,35,0.06) 0%, transparent 60%),
+      radial-gradient(ellipse 60% 50% at 90% 100%,  rgba(78,205,196,0.05) 0%, transparent 60%);
+  }
+
+  .dashboard {
+    display: grid;
+    grid-template-columns: 380px 1fr 340px;
+    grid-template-rows: 60px 1fr 1fr 1fr;
+    gap: 10px;
+    padding: 12px 16px;
+    height: 100vh;
+    max-height: 100vh;
+  }
+
+  /* ── HEADER ── */
+  .header {
+    grid-column: 1 / -1;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 4px;
+  }
+
+  .header h1 {
+    font-family: 'DM Serif Display', serif;
+    font-size: 1.7rem;
+    color: var(--text);
+  }
+  .header h1 span { color: var(--amber); }
+  .greeting { font-size: 0.75rem; color: var(--muted); margin-top: 2px; }
+
+  #clock {
+    font-family: 'DM Mono', monospace;
+    font-size: 2.4rem;
+    color: var(--amber);
+    letter-spacing: 2px;
+    line-height: 1;
+    text-align: right;
+  }
+  #date-display { font-size: 0.75rem; color: var(--muted); text-align: right; margin-top: 3px; }
+
+  /* ── CARDS ── */
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 14px 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    overflow: hidden;
+    position: relative;
+    animation: fadeUp 0.5s ease both;
+  }
+  .card::before {
+    content:'';
+    position:absolute; top:0; left:0; right:0; height:2px;
+    background: linear-gradient(90deg,transparent,var(--accent,var(--amber)),transparent);
+    opacity:0.6;
+  }
+  @keyframes fadeUp {
+    from { opacity:0; transform:translateY(14px); }
+    to   { opacity:1; transform:translateY(0); }
+  }
+
+  .card-title {
+    font-size: 0.68rem;
+    font-weight: 600;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--muted);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .dot {
+    width:6px; height:6px; border-radius:50%;
+    background: var(--accent, var(--amber));
+    box-shadow: 0 0 6px var(--accent, var(--amber));
+  }
+
+  /* ── WEATHER ── */
+  .weather-card { --accent: var(--teal); animation-delay:0.05s; grid-column:3; grid-row:2; }
+  .weather-main { display:flex; align-items:flex-end; gap:12px; }
+  .weather-icon { font-size:2.8rem; line-height:1; }
+  .weather-temp { font-family:'DM Serif Display',serif; font-size:3rem; color:var(--teal); line-height:1; }
+  .weather-meta { font-size:0.72rem; color:var(--muted); line-height:1.8; }
+  .weather-meta strong { color:var(--text); }
+  .weather-tags { display:flex; gap:8px; flex-wrap:wrap; }
+  .wtag {
+    background:var(--surface2); border:1px solid var(--border);
+    border-radius:7px; padding:4px 9px; font-size:0.68rem; color:var(--muted);
+  }
+  .wtag span { color:var(--teal); font-weight:600; }
+
+  /* ── CALENDAR ── */
+  .calendar-card { --accent:var(--amber); grid-column:2; grid-row:2/4; animation-delay:0.1s; }
+  .event-list { display:flex; flex-direction:column; gap:7px; flex:1; overflow-y:auto; }
+  .event-list::-webkit-scrollbar { width:3px; }
+  .event-list::-webkit-scrollbar-thumb { background:var(--border); border-radius:2px; }
+
+  .event-item {
+    background:var(--surface2); border:1px solid var(--border);
+    border-left:3px solid var(--amber); border-radius:9px; padding:10px 12px;
+  }
+  .event-item.today  { border-left-color:var(--rose); }
+  .event-time { font-family:'DM Mono',monospace; font-size:0.62rem; color:var(--muted); margin-bottom:3px; }
+  .event-name { font-size:0.92rem; font-weight:500; }
+  .event-badge {
+    display:inline-block; font-size:0.58rem; font-weight:600;
+    letter-spacing:1px; text-transform:uppercase; padding:2px 6px; border-radius:4px; margin-top:4px;
+  }
+  .badge-today    { background:rgba(255,107,107,0.15); color:var(--rose); }
+  .badge-tomorrow { background:rgba(245,166,35,0.15);  color:var(--amber); }
+
+  /* ── TELEGRAM ── */
+  .telegram-card { --accent:var(--blue); animation-delay:0.15s; grid-column:1; grid-row:2/5; }
+  .messages-list { display:flex; flex-direction:column; gap:10px; flex:1; overflow-y:auto; }
+  .messages-list::-webkit-scrollbar { width:3px; }
+  .messages-list::-webkit-scrollbar-thumb { background:var(--border); border-radius:2px; }
+
+  .msg-bubble {
+    background:var(--surface2); border:1px solid var(--border);
+    border-radius:9px; padding:14px 16px; animation:fadeUp 0.3s ease;
+  }
+  .msg-header { display:flex; justify-content:space-between; margin-bottom:3px; }
+  .msg-sender { font-size:1.1rem; font-weight:700; color:var(--blue); font-family:'DM Mono',monospace; }
+  .msg-time   { font-size:0.9rem; color:var(--muted); font-family:'DM Mono',monospace; }
+  .msg-text   { font-size:1.4rem; font-weight:500; color:var(--text); line-height:1.5; font-family:'DM Mono',monospace; white-space:normal; word-break:break-word; }
+
+  .tg-row { display:flex; gap:7px; }
+  .tg-input {
+    flex:1; background:var(--surface2); border:1px solid var(--border);
+    border-radius:7px; padding:7px 10px; color:var(--text);
+    font-family:'DM Sans',sans-serif; font-size:0.78rem; outline:none;
+    transition:border-color 0.2s;
+  }
+  .tg-input:focus { border-color:var(--blue); }
+  .tg-input::placeholder { color:var(--muted); }
+
+  .send-btn {
+    background:var(--blue); color:#0d1117; border:none; border-radius:7px;
+    padding:7px 13px; font-weight:600; font-size:0.75rem; cursor:pointer;
+    transition:background 0.2s;
+  }
+  .send-btn:hover { background:#7dc5ff; }
+
+  /* ── TODO ── */
+  .todo-card { --accent:var(--success); animation-delay:0.2s; grid-column:3; grid-row:3; }
+  .todo-list { display:flex; flex-direction:column; gap:5px; flex:1; overflow-y:auto; }
+  .todo-list::-webkit-scrollbar { width:3px; }
+  .todo-list::-webkit-scrollbar-thumb { background:var(--border); border-radius:2px; }
+
+  .todo-item {
+    display:flex; align-items:center; gap:9px; padding:7px 9px;
+    background:var(--surface2); border:1px solid var(--border); border-radius:7px;
+    transition:opacity 0.2s;
+  }
+  .todo-item.done { opacity:0.4; }
+  .todo-check {
+    width:16px; height:16px; border:2px solid var(--border); border-radius:4px;
+    cursor:pointer; display:flex; align-items:center; justify-content:center;
+    flex-shrink:0; font-size:0.6rem; transition:background 0.2s, border-color 0.2s;
+  }
+  .todo-item.done .todo-check { background:var(--success); border-color:var(--success); color:#0d1117; }
+  .todo-text { font-size:0.88rem; color:var(--text); flex:1; }
+  .todo-item.done .todo-text { text-decoration:line-through; color:var(--muted); }
+  .todo-who {
+    font-size:0.62rem; color:var(--muted); background:var(--surface);
+    padding:2px 6px; border-radius:4px; border:1px solid var(--border);
+  }
+
+  .add-row { display:flex; gap:7px; }
+  .add-input {
+    flex:1; background:var(--surface2); border:1px solid var(--border);
+    border-radius:7px; padding:6px 9px; color:var(--text);
+    font-family:'DM Sans',sans-serif; font-size:0.75rem; outline:none;
+    transition:border-color 0.2s;
+  }
+  .add-input:focus { border-color:var(--success); }
+  .add-input::placeholder { color:var(--muted); }
+  .add-btn {
+    background:var(--success); color:#0d1117; border:none;
+    border-radius:7px; padding:6px 12px; font-weight:700; font-size:1rem; cursor:pointer;
+  }
+  .add-btn:hover { background:#6ee8a4; }
+
+  /* ── NOTICEBOARD ── */
+  .notice-card { --accent:var(--rose); animation-delay:0.25s; display:none; }
+  .notice-list { display:flex; flex-direction:column; gap:7px; flex:1; overflow-y:auto; }
+  .notice-list::-webkit-scrollbar { width:3px; }
+  .notice-list::-webkit-scrollbar-thumb { background:var(--border); border-radius:2px; }
+
+  .notice-post {
+    background:var(--surface2); border:1px solid var(--border);
+    border-left:3px solid var(--rose); border-radius:9px; padding:10px 12px;
+    display:flex; justify-content:space-between; align-items:flex-start;
+  }
+  .notice-text   { font-size:0.9rem; color:var(--text); line-height:1.5; }
+  .notice-author { font-size:0.62rem; color:var(--muted); margin-top:3px; }
+  .notice-del {
+    background:none; border:none; color:var(--muted); cursor:pointer;
+    font-size:0.85rem; padding-left:8px; transition:color 0.2s;
+  }
+  .notice-del:hover { color:var(--rose); }
+
+  /* ── AGENT CHAT ── */
+  .agent-card { --accent:var(--purple,#b060ff); animation-delay:0.3s; --accent:#b060ff; grid-column:2; grid-row:3; }
+
+  .agent-response {
+    background: linear-gradient(135deg, rgba(176,96,255,0.08), rgba(0,212,255,0.05));
+    border: 1px solid rgba(176,96,255,0.2);
+    border-radius: 9px;
+    padding: 10px 12px;
+    font-size: 0.78rem;
+    color: var(--text);
+    line-height: 1.6;
+    min-height: 40px;
+    flex: 1;
+    overflow-y: auto;
+  }
+
+  .agent-response.thinking {
+    color: var(--muted);
+    font-style: italic;
+  }
+
+  .agent-input-row { display:flex; gap:7px; }
+  .agent-input {
+    flex:1; background:var(--surface2); border:1px solid var(--border);
+    border-radius:7px; padding:7px 10px; color:var(--text);
+    font-family:'DM Sans',sans-serif; font-size:0.78rem; outline:none;
+    transition:border-color 0.2s;
+  }
+  .agent-input:focus { border-color:#b060ff; }
+  .agent-input::placeholder { color:var(--muted); }
+
+  .agent-btn {
+    background:#b060ff; color:#fff; border:none; border-radius:7px;
+    padding:7px 13px; font-weight:600; font-size:0.75rem; cursor:pointer;
+    transition:background 0.2s;
+  }
+  .agent-btn:hover { background:#c880ff; }
+  .agent-btn:disabled { opacity:0.5; cursor:not-allowed; }
+
+  .agent-examples {
+    display:flex; flex-wrap:wrap; gap:5px;
+  }
+
+  .example-chip {
+    background:var(--surface2); border:1px solid var(--border);
+    border-radius:20px; padding:3px 10px; font-size:0.65rem; color:var(--muted);
+    cursor:pointer; transition:border-color 0.2s, color 0.2s; font-size:0.72rem;
+  }
+  .example-chip:hover { border-color:#b060ff; color:#b060ff; }
+
+  /* ── LIVE DOT ── */
+  .live { display:inline-flex; align-items:center; gap:5px; font-size:0.62rem; color:var(--success); }
+  .live::before {
+    content:''; width:6px; height:6px; background:var(--success);
+    border-radius:50%; animation:pulse 2s infinite;
+  }
+  @keyframes pulse {
+    0%,100% { box-shadow:0 0 0 0 rgba(82,214,138,0.4); }
+    50%      { box-shadow:0 0 0 5px rgba(82,214,138,0); }
+  }
+
+  .no-items { color:var(--muted); font-size:0.75rem; text-align:center; padding:12px 0; }
+
+  .spinner {
+    display:inline-block; width:10px; height:10px;
+    border:2px solid rgba(176,96,255,0.3); border-top-color:#b060ff;
+    border-radius:50%; animation:spin 0.7s linear infinite; margin-right:6px;
+  }
+  @keyframes spin { to { transform:rotate(360deg); } }
+  /* ── 1920x1080 OPTIMISED ── */
+  @media screen and (max-height: 1080px) {
+    .dashboard { grid-template-rows: 58px 1fr 1fr 1fr; gap: 10px; padding: 12px 16px; }
+    .telegram-card { grid-column:1; grid-row:2/4; }
+    .calendar-card { grid-column:2; grid-row:2/4; }
+    .agent-card { grid-column:2; grid-row:3; }
+    .weather-card { grid-column:3; grid-row:2; }
+    .todo-card { grid-column:3; grid-row:3; }
+    .card { padding: 12px 14px; gap: 8px; }
+    .weather-icon { font-size:2.4rem !important; }
+    .weather-temp { font-size:2.2rem !important; }
+    .event-name { font-size:0.82rem; }
+    .msg-text { font-size:1.4rem; }
+    .todo-text { font-size:0.8rem; }
+    .notice-text { font-size:0.82rem; }
+    .agent-response { font-size:0.76rem; min-height:36px; }
+    #clock { font-size:2rem; }
+  }
+
+  /* ── CRICKET ── */
+  .cricket-card { --accent: #00cc44; animation-delay:0.35s; grid-column:3; grid-row:3; }
+  .cricket-match {
+    background:var(--surface2); border:1px solid var(--border);
+    border-left:3px solid #00cc44; border-radius:9px; padding:10px 12px;
+    margin-bottom:7px;
+  }
+  .cricket-match:last-child { margin-bottom:0; }
+  .cricket-teams { font-size:0.88rem; font-weight:600; color:var(--text); margin-bottom:4px; }
+  .cricket-score { font-family:'DM Mono',monospace; font-size:0.78rem; color:#00cc44; margin-bottom:3px; line-height:1.5; }
+  .cricket-status { font-size:0.68rem; color:var(--muted); }
+  .cricket-live-badge {
+    display:inline-block; background:rgba(0,204,68,0.15); border:1px solid rgba(0,204,68,0.4);
+    color:#00cc44; font-size:0.58rem; font-weight:700; letter-spacing:1px;
+    padding:1px 6px; border-radius:4px; text-transform:uppercase; margin-left:6px;
+    animation: pulse 2s infinite;
+  }
+  .cricket-list { flex:1; overflow-y:auto; }
+  .cricket-list::-webkit-scrollbar { width:3px; }
+  .cricket-list::-webkit-scrollbar-thumb { background:var(--border); border-radius:2px; }
+
+</style>
+</head>
+<body>
+<div class="dashboard">
+
+  <!-- HEADER -->
+  <header class="header">
+    <div>
+      <div style="display:flex; align-items:baseline; gap:18px; flex-wrap:wrap;">
+        <h1>Aspen <span>Hub</span></h1>
+        <div id="tagline-display" 
+             style="font-family:'DM Serif Display',serif; font-weight:400; font-style:italic;
+                    font-size:1.7rem; color:var(--muted); cursor:pointer; 
+                    border-bottom:1px dashed transparent; transition:border-color 0.2s;"
+             title="Click to edit"
+             onclick="editTagline()"
+             onmouseenter="this.style.borderBottomColor='var(--amber)'"
+             onmouseleave="this.style.borderBottomColor='transparent'">
+          Where family comes together
+        </div>
+        <input id="tagline-input"
+               style="display:none; font-family:'DM Serif Display',serif; font-weight:400;
+                      font-style:italic; font-size:1.7rem; color:var(--text);
+                      background:transparent; border:none; border-bottom:1px solid var(--amber);
+                      outline:none; width:380px;"
+               onblur="saveTagline()" 
+               onkeydown="if(event.key==='Enter') saveTagline(); if(event.key==='Escape') cancelTagline();"/>
+      </div>
+      <div class="greeting" id="greeting">Good morning, Family!</div>
+    </div>
+    <div style="display:flex;align-items:center;gap:18px;">
+      <span class="live" id="status-dot">LIVE</span>
+      <div>
+        <div id="clock">00:00:00</div>
+        <div id="date-display">—</div>
+      </div>
+    </div>
+  </header>
+
+  <!-- TELEGRAM: col1, spans both rows -->
+  <div class="card telegram-card">
+    <div class="card-title"><span class="dot"></span>Telegram — Family Messages</div>
+    <div class="messages-list" id="messages-list">
+      <div class="no-items">Loading messages…</div>
+    </div>
+    <div class="tg-row">
+      <input class="tg-input" id="tg-input" type="text" placeholder="Message the family…"/>
+      <button class="send-btn" onclick="sendTelegram()">Send</button>
+    </div>
+  </div>
+
+  <!-- CALENDAR: col2, row2 -->
+  <div class="card calendar-card">
+    <div class="card-title"><span class="dot"></span>Upcoming Events — Next 2 Days</div>
+    <div class="event-list" id="event-list"><div class="no-items">Loading events…</div></div>
+  </div>
+
+  <!-- WEATHER: col3, row2 -->
+  <div class="card weather-card">
+    <div class="card-title"><span class="dot"></span>Weather</div>
+    <div class="weather-main">
+      <div class="weather-icon" id="w-icon">⛅</div>
+      <div>
+        <div class="weather-temp" id="w-temp">—°C</div>
+        <div class="weather-meta" id="w-desc">Loading…</div>
+      </div>
+    </div>
+    <div class="weather-tags">
+      <div class="wtag">Humidity <span id="w-hum">—</span></div>
+      <div class="wtag">Wind <span id="w-wind">—</span></div>
+      <div class="wtag">Feels <span id="w-feels">—</span></div>
+    </div>
+  </div>
+
+  <!-- AI AGENT: col2, row3 -->
+  <div class="card agent-card">
+    <div class="card-title"><span class="dot" style="background:#b060ff;box-shadow:0 0 6px #b060ff"></span>AI Agent — Ask or Command</div>
+    <div class="agent-response thinking" id="agent-response">
+      Ask me anything… e.g. "What's on today?" or "Remind kids about homework"
+    </div>
+    <div class="agent-examples" id="agent-examples">
+      <span class="example-chip" onclick="askAgent(this.textContent)">What's on today?</span>
+      <span class="example-chip" onclick="askAgent(this.textContent)">How's the weather?</span>
+      <span class="example-chip" onclick="askAgent(this.textContent)">Add groceries to chores</span>
+      <span class="example-chip" onclick="askAgent(this.textContent)">Message kids: dinner at 7</span>
+      <span class="example-chip" onclick="askAgent(this.textContent)">Post a motivational quote</span>
+    </div>
+    <div class="agent-input-row">
+      <input class="agent-input" id="agent-input" type="text" placeholder="Type a command or question…"/>
+      <button class="agent-btn" id="agent-btn" onclick="sendAgent()">Ask ✦</button>
+    </div>
+  </div>
+
+  <!-- CRICKET: col3, row3 top half via CSS -->
+  <div class="card cricket-card" style="grid-column:3; grid-row:3;">
+    <div class="card-title"><span class="dot" style="background:#00cc44;box-shadow:0 0 6px #00cc44"></span>🏏 Live Cricket</div>
+    <div class="cricket-list" id="cricket-list">
+      <div class="no-items">Loading scores…</div>
+    </div>
+  </div>
+
+  <!-- TODO: col3, row4 — we need an extra row -->
+  <div class="card todo-card" style="grid-column:3; grid-row:4;">
+    <div class="card-title"><span class="dot"></span>Family Chores & To-Do</div>
+    <div class="todo-list" id="todo-list"><div class="no-items">Loading…</div></div>
+    <div class="add-row" style="flex-direction:column; gap:6px;">
+      <div style="display:flex; gap:6px;">
+        <input class="add-input" id="todo-input" type="text" placeholder="Task description…" style="flex:2"/>
+        <select id="todo-who" style="flex:1; background:var(--surface2); border:1px solid var(--border); border-radius:7px; padding:6px 8px; color:var(--text); font-family:'DM Sans',sans-serif; font-size:0.75rem; outline:none;">
+          <option value="Family">👨‍👩‍👧 Family</option>
+          <option value="Benet">👨 Benet</option>
+          <option value="Steffi">👩 Steffi</option>
+          <option value="Wayne">🧒 Wayne</option>
+          <option value="Zane">🧒 Zane</option>
+        </select>
+        <button class="add-btn" onclick="addTodo()">+ Add</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- NOTICEBOARD: hidden, managed via AI agent -->
+  <div class="card notice-card" style="display:none">
+    <div class="card-title"><span class="dot"></span>Family Noticeboard</div>
+    <div class="notice-list" id="notice-list"></div>
+    <div class="add-row">
+      <input class="add-input" id="notice-input" type="text" placeholder="Post a notice…"/>
+      <button class="add-btn" style="background:var(--rose);color:#fff" onclick="addNotice()">+</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ─────────────────────────────────────────────
+// ⚙️  CONFIG — Update AGENT_URL after deploying to Render
+// ─────────────────────────────────────────────
+const AGENT_URL = "https://homehub-agent.onrender.com"; // ← Replace after Render deploy
+let agentHistory = [];
+
+// ─── CLOCK ───────────────────────────────────
+function updateClock() {
+  const now = new Date();
+  const pad = n => String(n).padStart(2,'0');
+  document.getElementById('clock').textContent =
+    `${pad(now.getHours())}:${pad(now.getMinutes())}:${pad(now.getSeconds())}`;
+
+  const days   = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+  const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  document.getElementById('date-display').textContent =
+    `${days[now.getDay()]}, ${now.getDate()} ${months[now.getMonth()]} ${now.getFullYear()}`;
+
+  const hr = now.getHours();
+  const g  = hr < 12 ? 'Good morning' : hr < 17 ? 'Good afternoon' : 'Good evening';
+  document.getElementById('greeting').textContent = `${g}, Family!`;
+}
+setInterval(updateClock, 1000);
+updateClock();
+
+
+// ─── LOAD ALL DATA FROM AGENT ─────────────────
+async function loadAllData() {
+  try {
+    const res  = await fetch(`${AGENT_URL}/data/all`);
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const data = await res.json();
+
+    if (data.weather && !data.weather.error)   renderWeather(data.weather);
+    if (data.events)                            renderEvents(data.events);
+    if (data.messages)                          renderMessages(data.messages);
+    if (data.todos)                             renderTodos(data.todos?.todos || []);
+    if (data.notices)                           renderNotices(data.notices || []);
+
+    document.getElementById('status-dot').textContent = 'LIVE';
+    document.getElementById('status-dot').style.color = 'var(--success)';
+  } catch(e) {
+    console.error('Data load error:', e);
+    document.getElementById('status-dot').textContent = 'OFFLINE';
+    document.getElementById('status-dot').style.color = 'var(--rose)';
+  }
+}
+
+
+// ─── WEATHER RENDER ──────────────────────────
+function renderWeather(w) {
+  if (!w || w.error) return;
+  const icons = {
+    'Clear sky':'☀️','Mainly clear':'🌤️','Partly cloudy':'⛅','Overcast':'☁️',
+    'Fog':'🌫️','Light drizzle':'🌦️','Drizzle':'🌦️','Heavy drizzle':'🌧️',
+    'Light rain':'🌧️','Rain':'🌧️','Heavy rain':'🌧️',
+    'Rain showers':'🌦️','Violent showers':'⛈️','Thunderstorm':'⛈️',
+    'Light snow':'❄️','Snow':'❄️','Heavy snow':'❄️',
+  };
+  document.getElementById('w-icon').textContent = icons[w.condition] || '🌡️';
+  document.getElementById('w-temp').textContent = `${w.temperature_c}°C`;
+  document.getElementById('w-desc').innerHTML   = `<strong>${w.city}</strong><br/>${w.condition}`;
+  document.getElementById('w-hum').textContent  = `${w.humidity_pct}%`;
+  document.getElementById('w-wind').textContent = `${w.wind_kmh} km/h`;
+  document.getElementById('w-feels').textContent= `${w.feels_like_c}°C`;
+}
+
+
+// ─── CALENDAR RENDER ─────────────────────────
+function renderEvents(events) {
+  const el = document.getElementById('event-list');
+  // Handle error object, non-array, or empty
+  if (!events || events.error) {
+    el.innerHTML = `<div class="no-items">📅 Calendar not connected yet.<br/>Make your Google Calendar public to enable.</div>`;
+    return;
+  }
+  if (!Array.isArray(events) || events.length === 0) {
+    el.innerHTML = `<div class="no-items">${events?.[0]?.message || 'No upcoming events 🎉'}</div>`;
+    return;
+  }
+  el.innerHTML = '';
+  events.forEach(ev => {
+    const dt      = new Date(ev.start);
+    const isToday = dt.getDate() === new Date().getDate();
+    const timeStr = ev.all_day ? 'All day' : dt.toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'});
+    const div = document.createElement('div');
+    div.className = `event-item ${isToday ? 'today' : ''}`;
+    div.innerHTML = `
+      <div class="event-time">${isToday ? 'TODAY' : 'TOMORROW'} · ${timeStr}</div>
+      <div class="event-name">${ev.title}</div>
+      <span class="event-badge ${isToday ? 'badge-today' : 'badge-tomorrow'}">${isToday ? 'Today' : 'Tomorrow'}</span>
+    `;
+    el.appendChild(div);
+  });
+}
+
+
+// ─── MESSAGES RENDER ─────────────────────────
+function renderMessages(messages) {
+  const el = document.getElementById('messages-list');
+  if (!messages || messages[0]?.message || messages[0]?.error) {
+    el.innerHTML = `<div class="no-items">${messages?.[0]?.message || 'No recent messages'}</div>`;
+    return;
+  }
+  el.innerHTML = '';
+  messages.slice(-6).forEach(m => {
+    const div = document.createElement('div');
+    div.className = 'msg-bubble';
+    div.innerHTML = `
+      <div class="msg-header">
+        <span class="msg-sender">${m.sender}</span>
+        <span class="msg-time">${m.time}</span>
+      </div>
+      <div class="msg-text">${m.text}</div>
+    `;
+    el.appendChild(div);
+  });
+  el.scrollTop = el.scrollHeight;
+}
+
+
+// ─── SEND TELEGRAM ───────────────────────────
+async function sendTelegram() {
+  const input = document.getElementById('tg-input');
+  const text  = input.value.trim();
+  if (!text) return;
+  input.value = '';
+
+  try {
+    await fetch(`${AGENT_URL}/agent/chat`, {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({
+        message: `Send this Telegram message to the family: "${text}"`,
+        history: agentHistory
+      })
+    });
+    // Optimistically add to UI
+    const el  = document.getElementById('messages-list');
+    const now = new Date().toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'});
+    const div = document.createElement('div');
+    div.className = 'msg-bubble';
+    div.innerHTML = `
+      <div class="msg-header"><span class="msg-sender">You</span><span class="msg-time">${now}</span></div>
+      <div class="msg-text">${text}</div>
+    `;
+    el.appendChild(div);
+    el.scrollTop = el.scrollHeight;
+  } catch(e) { alert('Could not send message. Is the agent running?'); }
+}
+
+
+// ─── TODO RENDER ─────────────────────────────
+// In-memory todos state for instant UI updates
+let todosState = [];
+
+function renderTodos(todos) {
+  todosState = todos; // keep local copy
+  const el = document.getElementById('todo-list');
+  if (!todos.length) { el.innerHTML = '<div class="no-items">No tasks yet — add one below!</div>'; return; }
+  el.innerHTML = '';
+  todos.forEach(t => {
+    const div = document.createElement('div');
+    div.className = `todo-item ${t.done ? 'done' : ''}`;
+    div.id = `todo-${t.id}`;
+    div.innerHTML = `
+      <div class="todo-check" onclick="toggleTodo(${t.id})">${t.done ? '✓' : ''}</div>
+      <div class="todo-text">${t.text}</div>
+      <div class="todo-who">${t.who}</div>
+    `;
+    el.appendChild(div);
+  });
+}
+
+async function toggleTodo(id) {
+  // 1. Find current state
+  const todo = todosState.find(t => t.id === id);
+  if (!todo) return;
+
+  // 2. Flip locally INSTANTLY — no waiting for server
+  todo.done = !todo.done;
+  const el    = document.getElementById(`todo-${id}`);
+  const check = el.querySelector('.todo-check');
+  if (todo.done) {
+    el.classList.add('done');
+    check.textContent = '✓';
+  } else {
+    el.classList.remove('done');
+    check.textContent = '';
+  }
+
+  // 3. Sync to server in background
+  try {
+    if (todo.done) {
+      await fetch(`${AGENT_URL}/todos/complete/${id}`, { method: 'POST' });
+    } else {
+      await fetch(`${AGENT_URL}/todos/uncomplete/${id}`, { method: 'POST' });
+    }
+  } catch(e) {
+    console.log('Sync error:', e);
+  }
+}
+
+async function addTodo() {
+  const input     = document.getElementById('todo-input');
+  const whoInput  = document.getElementById('todo-who');
+  const val       = input.value.trim();
+  if (!val) return;
+  input.value = '';
+
+  const who = whoInput ? whoInput.value.trim() || 'Family' : 'Family';
+
+  try {
+    // Call direct todos endpoint — instant, no AI delay
+    const res = await fetch(`${AGENT_URL}/todos/add`, {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({ task: val, assigned_to: who })
+    });
+    if (!res.ok) throw new Error('Direct endpoint failed');
+    await loadAllData();
+  } catch(e) {
+    // Fallback through agent
+    await fetch(`${AGENT_URL}/agent/chat`, {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({
+        message: `Add todo task: "${val}" assigned to ${who}`,
+        history: []
+      })
+    });
+    loadAllData();
+  }
+}
+
+
+// ─── NOTICES RENDER ──────────────────────────
+function renderNotices(notices) {
+  const el = document.getElementById('notice-list');
+  if (!notices.length) { el.innerHTML = '<div class="no-items">No notices yet.</div>'; return; }
+  el.innerHTML = '';
+  notices.forEach(n => {
+    const div = document.createElement('div');
+    div.className = 'notice-post';
+    div.innerHTML = `
+      <div>
+        <div class="notice-text">${n.text}</div>
+        <div class="notice-author">— ${n.author} · ${n.time || ''}</div>
+      </div>
+      <button class="notice-del" onclick="deleteNotice(${n.id})">✕</button>
+    `;
+    el.appendChild(div);
+  });
+}
+
+async function deleteNotice(id) {
+  try {
+    await fetch(`${AGENT_URL}/notices/${id}`, { method: 'DELETE' });
+  } catch(e) {
+    await fetch(`${AGENT_URL}/agent/chat`, {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({ message: `Delete notice id ${id}`, history: [] })
+    });
+  }
+  loadAllData();
+}
+
+async function addNotice() {
+  const input = document.getElementById('notice-input');
+  const val   = input.value.trim();
+  if (!val) return;
+  input.value = '';
+  try {
+    await fetch(`${AGENT_URL}/notices/add?text=${encodeURIComponent(val)}&author=Family`, { method: 'POST' });
+  } catch(e) {
+    await fetch(`${AGENT_URL}/agent/chat`, {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({ message: `Post this on the noticeboard: "${val}"`, history: [] })
+    });
+  }
+  loadAllData();
+}
+
+
+// ─── AI AGENT CHAT ───────────────────────────
+async function sendAgent() {
+  const input = document.getElementById('agent-input');
+  const text  = input.value.trim();
+  if (!text) return;
+  await askAgent(text);
+  input.value = '';
+}
+
+async function askAgent(text) {
+  const responseEl = document.getElementById('agent-response');
+  const btn        = document.getElementById('agent-btn');
+
+  responseEl.className = 'agent-response thinking';
+  responseEl.innerHTML = '<span class="spinner"></span>Thinking…';
+  btn.disabled = true;
+
+  try {
+    const res  = await fetch(`${AGENT_URL}/agent/chat`, {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({ message: text, history: agentHistory })
+    });
+    const data = await res.json();
+    agentHistory = data.history;
+
+    responseEl.className = 'agent-response';
+    responseEl.textContent = data.reply || 'Done!';
+
+    // Refresh relevant data after agent action
+    setTimeout(loadAllData, 800);
+  } catch(e) {
+    responseEl.className = 'agent-response thinking';
+    responseEl.textContent = '⚠️ Could not reach agent. Is it deployed on Render?';
+  } finally {
+    btn.disabled = false;
+  }
+}
+
+document.getElementById('agent-input').addEventListener('keydown', e => {
+  if (e.key === 'Enter') sendAgent();
+});
+document.getElementById('tg-input').addEventListener('keydown', e => {
+  if (e.key === 'Enter') sendTelegram();
+});
+document.getElementById('todo-input').addEventListener('keydown', e => {
+  if (e.key === 'Enter') addTodo();
+});
+document.getElementById('notice-input').addEventListener('keydown', e => {
+  if (e.key === 'Enter') addNotice();
+});
+
+
+// ─── KEEP RENDER ALIVE (ping every 10 min) ──
+async function pingAgent() {
+  try { await fetch(`${AGENT_URL}/ping`); } catch(e) {}
+}
+
+
+// ─── INIT ────────────────────────────────────
+loadAllData();
+loadCricket();
+pingAgent();
+setInterval(loadAllData,  5 * 60 * 1000);   // refresh data every 5 min
+setInterval(loadCricket,  2 * 60 * 1000);   // refresh cricket every 2 min
+setInterval(pingAgent,   10 * 60 * 1000);   // keep Render alive every 10 min
+
+
+// ─── CRICKET ─────────────────────────────────
+async function loadCricket() {
+  try {
+    const res  = await fetch(`${AGENT_URL}/cricket`);
+    const data = await res.json();
+    renderCricket(data.matches || []);
+  } catch(e) {
+    document.getElementById('cricket-list').innerHTML =
+      '<div class="no-items">Could not load cricket scores</div>';
+  }
+}
+
+function renderCricket(matches) {
+  const el = document.getElementById('cricket-list');
+  if (!matches.length) {
+    el.innerHTML = '<div class="no-items">No live matches right now 🏏</div>';
+    return;
+  }
+  el.innerHTML = '';
+  matches.forEach(m => {
+    const div = document.createElement('div');
+    div.className = 'cricket-match';
+    div.innerHTML = `
+      <div class="cricket-teams">
+        ${m.name}
+        ${m.live ? '<span class="cricket-live-badge">● LIVE</span>' : ''}
+      </div>
+      ${m.score ? `<div class="cricket-score">${m.score}</div>` : ''}
+      <div class="cricket-status">${m.status || m.series || ''}</div>
+    `;
+    el.appendChild(div);
+  });
+}
+
+// ─── TAGLINE ─────────────────────────────────
+function editTagline() {
+  const display = document.getElementById('tagline-display');
+  const input   = document.getElementById('tagline-input');
+  input.value   = display.textContent.trim();
+  display.style.display = 'none';
+  input.style.display   = 'inline-block';
+  input.focus();
+  input.select();
+}
+
+function saveTagline() {
+  const display = document.getElementById('tagline-display');
+  const input   = document.getElementById('tagline-input');
+  const val     = input.value.trim();
+  display.textContent     = val || '—';
+  display.style.display   = 'inline-block';
+  input.style.display     = 'none';
+  localStorage.setItem('aspen_tagline', val);
+}
+
+function cancelTagline() {
+  const display = document.getElementById('tagline-display');
+  const input   = document.getElementById('tagline-input');
+  display.style.display = 'inline-block';
+  input.style.display   = 'none';
+}
+
+// Load saved tagline on startup
+const savedTagline = localStorage.getItem('aspen_tagline');
+if (savedTagline !== null) {
+  document.getElementById('tagline-display').textContent = savedTagline || '—';
+}
+
+</script>
+</body>
+</html>
