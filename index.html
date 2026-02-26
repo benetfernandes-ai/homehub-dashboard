@@ -35,11 +35,12 @@
 
   .dashboard {
     display: grid;
-    grid-template-columns: 320px 1fr 300px;
-    grid-template-rows: 72px 1fr 1fr;
-    gap: 14px;
-    padding: 16px;
+    grid-template-columns: 320px 1fr 340px;
+    grid-template-rows: 60px 1fr 1fr;
+    gap: 10px;
+    padding: 12px 16px;
     height: 100vh;
+    max-height: 100vh;
   }
 
   /* ── HEADER ── */
@@ -53,7 +54,7 @@
 
   .header h1 {
     font-family: 'DM Serif Display', serif;
-    font-size: 1.9rem;
+    font-size: 1.7rem;
     color: var(--text);
   }
   .header h1 span { color: var(--amber); }
@@ -61,7 +62,7 @@
 
   #clock {
     font-family: 'DM Mono', monospace;
-    font-size: 2.6rem;
+    font-size: 2.4rem;
     color: var(--amber);
     letter-spacing: 2px;
     line-height: 1;
@@ -73,11 +74,11 @@
   .card {
     background: var(--surface);
     border: 1px solid var(--border);
-    border-radius: 14px;
-    padding: 16px 18px;
+    border-radius: 16px;
+    padding: 14px 16px;
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: 8px;
     overflow: hidden;
     position: relative;
     animation: fadeUp 0.5s ease both;
@@ -94,7 +95,7 @@
   }
 
   .card-title {
-    font-size: 0.62rem;
+    font-size: 0.68rem;
     font-weight: 600;
     letter-spacing: 2px;
     text-transform: uppercase;
@@ -112,8 +113,8 @@
   /* ── WEATHER ── */
   .weather-card { --accent: var(--teal); animation-delay:0.05s; }
   .weather-main { display:flex; align-items:flex-end; gap:12px; }
-  .weather-icon { font-size:3rem; line-height:1; }
-  .weather-temp { font-family:'DM Serif Display',serif; font-size:2.6rem; color:var(--teal); line-height:1; }
+  .weather-icon { font-size:2.8rem; line-height:1; }
+  .weather-temp { font-family:'DM Serif Display',serif; font-size:3rem; color:var(--teal); line-height:1; }
   .weather-meta { font-size:0.72rem; color:var(--muted); line-height:1.8; }
   .weather-meta strong { color:var(--text); }
   .weather-tags { display:flex; gap:8px; flex-wrap:wrap; }
@@ -135,7 +136,7 @@
   }
   .event-item.today  { border-left-color:var(--rose); }
   .event-time { font-family:'DM Mono',monospace; font-size:0.62rem; color:var(--muted); margin-bottom:3px; }
-  .event-name { font-size:0.82rem; font-weight:500; }
+  .event-name { font-size:0.92rem; font-weight:500; }
   .event-badge {
     display:inline-block; font-size:0.58rem; font-weight:600;
     letter-spacing:1px; text-transform:uppercase; padding:2px 6px; border-radius:4px; margin-top:4px;
@@ -145,18 +146,18 @@
 
   /* ── TELEGRAM ── */
   .telegram-card { --accent:var(--blue); animation-delay:0.15s; }
-  .messages-list { display:flex; flex-direction:column; gap:7px; flex:1; overflow-y:auto; max-height:140px; }
+  .messages-list { display:flex; flex-direction:column; gap:8px; flex:1; overflow-y:auto; min-height:160px; }
   .messages-list::-webkit-scrollbar { width:3px; }
   .messages-list::-webkit-scrollbar-thumb { background:var(--border); border-radius:2px; }
 
   .msg-bubble {
     background:var(--surface2); border:1px solid var(--border);
-    border-radius:9px; padding:8px 11px; animation:fadeUp 0.3s ease;
+    border-radius:9px; padding:10px 14px; animation:fadeUp 0.3s ease;
   }
   .msg-header { display:flex; justify-content:space-between; margin-bottom:3px; }
-  .msg-sender { font-size:0.68rem; font-weight:600; color:var(--blue); }
-  .msg-time   { font-size:0.62rem; color:var(--muted); font-family:'DM Mono',monospace; }
-  .msg-text   { font-size:0.8rem; color:var(--text); line-height:1.4; }
+  .msg-sender { font-size:0.82rem; font-weight:700; color:var(--blue); }
+  .msg-time   { font-size:0.72rem; color:var(--muted); font-family:'DM Mono',monospace; }
+  .msg-text   { font-size:1rem; color:var(--text); line-height:1.5; }
 
   .tg-row { display:flex; gap:7px; }
   .tg-input {
@@ -193,7 +194,7 @@
     flex-shrink:0; font-size:0.6rem; transition:background 0.2s, border-color 0.2s;
   }
   .todo-item.done .todo-check { background:var(--success); border-color:var(--success); color:#0d1117; }
-  .todo-text { font-size:0.8rem; color:var(--text); flex:1; }
+  .todo-text { font-size:0.88rem; color:var(--text); flex:1; }
   .todo-item.done .todo-text { text-decoration:line-through; color:var(--muted); }
   .todo-who {
     font-size:0.62rem; color:var(--muted); background:var(--surface);
@@ -226,7 +227,7 @@
     border-left:3px solid var(--rose); border-radius:9px; padding:10px 12px;
     display:flex; justify-content:space-between; align-items:flex-start;
   }
-  .notice-text   { font-size:0.82rem; color:var(--text); line-height:1.5; }
+  .notice-text   { font-size:0.9rem; color:var(--text); line-height:1.5; }
   .notice-author { font-size:0.62rem; color:var(--muted); margin-top:3px; }
   .notice-del {
     background:none; border:none; color:var(--muted); cursor:pointer;
@@ -245,7 +246,7 @@
     font-size: 0.78rem;
     color: var(--text);
     line-height: 1.6;
-    min-height: 50px;
+    min-height: 40px;
     flex: 1;
     overflow-y: auto;
   }
@@ -280,7 +281,7 @@
   .example-chip {
     background:var(--surface2); border:1px solid var(--border);
     border-radius:20px; padding:3px 10px; font-size:0.65rem; color:var(--muted);
-    cursor:pointer; transition:border-color 0.2s, color 0.2s;
+    cursor:pointer; transition:border-color 0.2s, color 0.2s; font-size:0.72rem;
   }
   .example-chip:hover { border-color:#b060ff; color:#b060ff; }
 
@@ -303,6 +304,19 @@
     border-radius:50%; animation:spin 0.7s linear infinite; margin-right:6px;
   }
   @keyframes spin { to { transform:rotate(360deg); } }
+  /* ── 1920x1080 OPTIMISED ── */
+  @media screen and (max-height: 1080px) {
+    .dashboard { grid-template-rows: 58px 1fr 1fr; gap: 10px; padding: 12px 16px; }
+    .card { padding: 12px 14px; gap: 8px; }
+    .weather-icon { font-size:2.4rem !important; }
+    .weather-temp { font-size:2.2rem !important; }
+    .event-name { font-size:0.82rem; }
+    .msg-text { font-size:0.8rem; }
+    .todo-text { font-size:0.8rem; }
+    .notice-text { font-size:0.82rem; }
+    .agent-response { font-size:0.76rem; min-height:36px; }
+    #clock { font-size:2rem; }
+  }
 </style>
 </head>
 <body>
@@ -362,9 +376,18 @@
   <div class="card todo-card">
     <div class="card-title"><span class="dot"></span>Family Chores & To-Do</div>
     <div class="todo-list" id="todo-list"><div class="no-items">Loading…</div></div>
-    <div class="add-row">
-      <input class="add-input" id="todo-input" type="text" placeholder="Add task – Who (e.g. Clean room – Kids)"/>
-      <button class="add-btn" onclick="addTodo()">+</button>
+    <div class="add-row" style="flex-direction:column; gap:6px;">
+      <div style="display:flex; gap:6px;">
+        <input class="add-input" id="todo-input" type="text" placeholder="Task description…" style="flex:2"/>
+        <select id="todo-who" style="flex:1; background:var(--surface2); border:1px solid var(--border); border-radius:7px; padding:6px 8px; color:var(--text); font-family:'DM Sans',sans-serif; font-size:0.75rem; outline:none;">
+          <option value="Family">👨‍👩‍👧 Family</option>
+          <option value="Dad">👨 Dad</option>
+          <option value="Mum">👩 Mum</option>
+          <option value="Kids">👧 Kids</option>
+          <option value="Me">🙋 Me</option>
+        </select>
+        <button class="add-btn" onclick="addTodo()">+ Add</button>
+      </div>
     </div>
   </div>
 
@@ -570,29 +593,50 @@ function renderTodos(todos) {
 }
 
 async function completeTodo(id) {
-  await fetch(`${AGENT_URL}/agent/chat`, {
-    method: 'POST',
-    headers: {'Content-Type':'application/json'},
-    body: JSON.stringify({ message: `Mark todo task id ${id} as complete`, history: [] })
-  });
+  // Call the direct API endpoint — faster than going through the agent
+  try {
+    await fetch(`${AGENT_URL}/todos/complete/${id}`, { method: 'POST' });
+  } catch(e) {
+    // Fallback to agent if direct endpoint fails
+    await fetch(`${AGENT_URL}/agent/chat`, {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({ message: `Mark todo task id ${id} as complete`, history: [] })
+    });
+  }
   loadAllData();
 }
 
 async function addTodo() {
-  const input = document.getElementById('todo-input');
-  const val   = input.value.trim();
+  const input     = document.getElementById('todo-input');
+  const whoInput  = document.getElementById('todo-who');
+  const val       = input.value.trim();
   if (!val) return;
   input.value = '';
-  const parts = val.split('–').map(s => s.trim());
-  await fetch(`${AGENT_URL}/agent/chat`, {
-    method: 'POST',
-    headers: {'Content-Type':'application/json'},
-    body: JSON.stringify({
-      message: `Add todo task: "${parts[0]}" assigned to ${parts[1] || 'Family'}`,
-      history: []
-    })
-  });
-  loadAllData();
+
+  const who = whoInput ? whoInput.value.trim() || 'Family' : 'Family';
+
+  try {
+    // Call direct todos endpoint — instant, no AI delay
+    const res = await fetch(`${AGENT_URL}/todos/add`, {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({ task: val, assigned_to: who })
+    });
+    if (!res.ok) throw new Error('Direct endpoint failed');
+    await loadAllData();
+  } catch(e) {
+    // Fallback through agent
+    await fetch(`${AGENT_URL}/agent/chat`, {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({
+        message: `Add todo task: "${val}" assigned to ${who}`,
+        history: []
+      })
+    });
+    loadAllData();
+  }
 }
 
 
@@ -616,11 +660,15 @@ function renderNotices(notices) {
 }
 
 async function deleteNotice(id) {
-  await fetch(`${AGENT_URL}/agent/chat`, {
-    method: 'POST',
-    headers: {'Content-Type':'application/json'},
-    body: JSON.stringify({ message: `Delete notice id ${id}`, history: [] })
-  });
+  try {
+    await fetch(`${AGENT_URL}/notices/${id}`, { method: 'DELETE' });
+  } catch(e) {
+    await fetch(`${AGENT_URL}/agent/chat`, {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({ message: `Delete notice id ${id}`, history: [] })
+    });
+  }
   loadAllData();
 }
 
@@ -629,11 +677,15 @@ async function addNotice() {
   const val   = input.value.trim();
   if (!val) return;
   input.value = '';
-  await fetch(`${AGENT_URL}/agent/chat`, {
-    method: 'POST',
-    headers: {'Content-Type':'application/json'},
-    body: JSON.stringify({ message: `Post this on the noticeboard: "${val}"`, history: [] })
-  });
+  try {
+    await fetch(`${AGENT_URL}/notices/add?text=${encodeURIComponent(val)}&author=Family`, { method: 'POST' });
+  } catch(e) {
+    await fetch(`${AGENT_URL}/agent/chat`, {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({ message: `Post this on the noticeboard: "${val}"`, history: [] })
+    });
+  }
   loadAllData();
 }
 
