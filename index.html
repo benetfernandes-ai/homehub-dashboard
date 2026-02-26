@@ -35,7 +35,7 @@
 
   .dashboard {
     display: grid;
-    grid-template-columns: 320px 1fr 340px;
+    grid-template-columns: 380px 1fr 340px;
     grid-template-rows: 60px 1fr 1fr;
     gap: 10px;
     padding: 12px 16px;
@@ -111,7 +111,7 @@
   }
 
   /* ── WEATHER ── */
-  .weather-card { --accent: var(--teal); animation-delay:0.05s; }
+  .weather-card { --accent: var(--teal); animation-delay:0.05s; grid-column:3; grid-row:2; }
   .weather-main { display:flex; align-items:flex-end; gap:12px; }
   .weather-icon { font-size:2.8rem; line-height:1; }
   .weather-temp { font-family:'DM Serif Display',serif; font-size:3rem; color:var(--teal); line-height:1; }
@@ -125,7 +125,7 @@
   .wtag span { color:var(--teal); font-weight:600; }
 
   /* ── CALENDAR ── */
-  .calendar-card { --accent:var(--amber); grid-row: span 2; animation-delay:0.1s; }
+  .calendar-card { --accent:var(--amber); grid-column:2; grid-row:2/4; animation-delay:0.1s; }
   .event-list { display:flex; flex-direction:column; gap:7px; flex:1; overflow-y:auto; }
   .event-list::-webkit-scrollbar { width:3px; }
   .event-list::-webkit-scrollbar-thumb { background:var(--border); border-radius:2px; }
@@ -145,7 +145,7 @@
   .badge-tomorrow { background:rgba(245,166,35,0.15);  color:var(--amber); }
 
   /* ── TELEGRAM ── */
-  .telegram-card { --accent:var(--blue); animation-delay:0.15s; }
+  .telegram-card { --accent:var(--blue); animation-delay:0.15s; grid-column:1; grid-row:2/4; }
   .messages-list { display:flex; flex-direction:column; gap:10px; flex:1; overflow-y:auto; }
   .messages-list::-webkit-scrollbar { width:3px; }
   .messages-list::-webkit-scrollbar-thumb { background:var(--border); border-radius:2px; }
@@ -177,7 +177,7 @@
   .send-btn:hover { background:#7dc5ff; }
 
   /* ── TODO ── */
-  .todo-card { --accent:var(--success); animation-delay:0.2s; }
+  .todo-card { --accent:var(--success); animation-delay:0.2s; grid-column:3; grid-row:3; }
   .todo-list { display:flex; flex-direction:column; gap:5px; flex:1; overflow-y:auto; }
   .todo-list::-webkit-scrollbar { width:3px; }
   .todo-list::-webkit-scrollbar-thumb { background:var(--border); border-radius:2px; }
@@ -217,7 +217,7 @@
   .add-btn:hover { background:#6ee8a4; }
 
   /* ── NOTICEBOARD ── */
-  .notice-card { --accent:var(--rose); grid-column:2/3; animation-delay:0.25s; }
+  .notice-card { --accent:var(--rose); animation-delay:0.25s; display:none; }
   .notice-list { display:flex; flex-direction:column; gap:7px; flex:1; overflow-y:auto; }
   .notice-list::-webkit-scrollbar { width:3px; }
   .notice-list::-webkit-scrollbar-thumb { background:var(--border); border-radius:2px; }
@@ -236,7 +236,7 @@
   .notice-del:hover { color:var(--rose); }
 
   /* ── AGENT CHAT ── */
-  .agent-card { --accent:var(--purple,#b060ff); animation-delay:0.3s; --accent:#b060ff; }
+  .agent-card { --accent:var(--purple,#b060ff); animation-delay:0.3s; --accent:#b060ff; grid-column:2; grid-row:3; }
 
   .agent-response {
     background: linear-gradient(135deg, rgba(176,96,255,0.08), rgba(0,212,255,0.05));
@@ -307,6 +307,11 @@
   /* ── 1920x1080 OPTIMISED ── */
   @media screen and (max-height: 1080px) {
     .dashboard { grid-template-rows: 58px 1fr 1fr; gap: 10px; padding: 12px 16px; }
+    .telegram-card { grid-column:1; grid-row:2/4; }
+    .calendar-card { grid-column:2; grid-row:2/4; }
+    .agent-card { grid-column:2; grid-row:3; }
+    .weather-card { grid-column:3; grid-row:2; }
+    .todo-card { grid-column:3; grid-row:3; }
     .card { padding: 12px 14px; gap: 8px; }
     .weather-icon { font-size:2.4rem !important; }
     .weather-temp { font-size:2.2rem !important; }
@@ -337,7 +342,25 @@
     </div>
   </header>
 
-  <!-- WEATHER -->
+  <!-- TELEGRAM: col1, spans both rows -->
+  <div class="card telegram-card">
+    <div class="card-title"><span class="dot"></span>Telegram — Family Messages</div>
+    <div class="messages-list" id="messages-list">
+      <div class="no-items">Loading messages…</div>
+    </div>
+    <div class="tg-row">
+      <input class="tg-input" id="tg-input" type="text" placeholder="Message the family…"/>
+      <button class="send-btn" onclick="sendTelegram()">Send</button>
+    </div>
+  </div>
+
+  <!-- CALENDAR: col2, row2 -->
+  <div class="card calendar-card">
+    <div class="card-title"><span class="dot"></span>Upcoming Events — Next 2 Days</div>
+    <div class="event-list" id="event-list"><div class="no-items">Loading events…</div></div>
+  </div>
+
+  <!-- WEATHER: col3, row2 -->
   <div class="card weather-card">
     <div class="card-title"><span class="dot"></span>Weather</div>
     <div class="weather-main">
@@ -354,54 +377,7 @@
     </div>
   </div>
 
-  <!-- CALENDAR -->
-  <div class="card calendar-card">
-    <div class="card-title"><span class="dot"></span>Upcoming Events — Next 2 Days</div>
-    <div class="event-list" id="event-list"><div class="no-items">Loading events…</div></div>
-  </div>
-
-  <!-- TELEGRAM -->
-  <div class="card telegram-card">
-    <div class="card-title"><span class="dot"></span>Telegram — Family Messages</div>
-    <div class="messages-list" id="messages-list">
-      <div class="no-items">Loading messages…</div>
-    </div>
-    <div class="tg-row">
-      <input class="tg-input" id="tg-input" type="text" placeholder="Message the family…"/>
-      <button class="send-btn" onclick="sendTelegram()">Send</button>
-    </div>
-  </div>
-
-  <!-- TODO -->
-  <div class="card todo-card">
-    <div class="card-title"><span class="dot"></span>Family Chores & To-Do</div>
-    <div class="todo-list" id="todo-list"><div class="no-items">Loading…</div></div>
-    <div class="add-row" style="flex-direction:column; gap:6px;">
-      <div style="display:flex; gap:6px;">
-        <input class="add-input" id="todo-input" type="text" placeholder="Task description…" style="flex:2"/>
-        <select id="todo-who" style="flex:1; background:var(--surface2); border:1px solid var(--border); border-radius:7px; padding:6px 8px; color:var(--text); font-family:'DM Sans',sans-serif; font-size:0.75rem; outline:none;">
-          <option value="Family">👨‍👩‍👧 Family</option>
-          <option value="Dad">👨 Dad</option>
-          <option value="Mum">👩 Mum</option>
-          <option value="Kids">👧 Kids</option>
-          <option value="Me">🙋 Me</option>
-        </select>
-        <button class="add-btn" onclick="addTodo()">+ Add</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- NOTICEBOARD -->
-  <div class="card notice-card">
-    <div class="card-title"><span class="dot"></span>Family Noticeboard</div>
-    <div class="notice-list" id="notice-list"><div class="no-items">Loading…</div></div>
-    <div class="add-row">
-      <input class="add-input" id="notice-input" style="--focus:var(--rose)" type="text" placeholder="Post a notice or reminder…"/>
-      <button class="add-btn" style="background:var(--rose);color:#fff" onclick="addNotice()">+</button>
-    </div>
-  </div>
-
-  <!-- AI AGENT CHAT -->
+  <!-- AI AGENT: col2, row3 -->
   <div class="card agent-card">
     <div class="card-title"><span class="dot" style="background:#b060ff;box-shadow:0 0 6px #b060ff"></span>AI Agent — Ask or Command</div>
     <div class="agent-response thinking" id="agent-response">
@@ -420,6 +396,34 @@
     </div>
   </div>
 
+  <!-- TODO: col3, row3 -->
+  <div class="card todo-card">
+    <div class="card-title"><span class="dot"></span>Family Chores & To-Do</div>
+    <div class="todo-list" id="todo-list"><div class="no-items">Loading…</div></div>
+    <div class="add-row" style="flex-direction:column; gap:6px;">
+      <div style="display:flex; gap:6px;">
+        <input class="add-input" id="todo-input" type="text" placeholder="Task description…" style="flex:2"/>
+        <select id="todo-who" style="flex:1; background:var(--surface2); border:1px solid var(--border); border-radius:7px; padding:6px 8px; color:var(--text); font-family:'DM Sans',sans-serif; font-size:0.75rem; outline:none;">
+          <option value="Family">👨‍👩‍👧 Family</option>
+          <option value="Dad">👨 Dad</option>
+          <option value="Mum">👩 Mum</option>
+          <option value="Kids">👧 Kids</option>
+          <option value="Me">🙋 Me</option>
+        </select>
+        <button class="add-btn" onclick="addTodo()">+ Add</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- NOTICEBOARD: hidden, managed via AI agent -->
+  <div class="card notice-card" style="display:none">
+    <div class="card-title"><span class="dot"></span>Family Noticeboard</div>
+    <div class="notice-list" id="notice-list"></div>
+    <div class="add-row">
+      <input class="add-input" id="notice-input" type="text" placeholder="Post a notice…"/>
+      <button class="add-btn" style="background:var(--rose);color:#fff" onclick="addNotice()">+</button>
+    </div>
+  </div>
 </div>
 
 <script>
